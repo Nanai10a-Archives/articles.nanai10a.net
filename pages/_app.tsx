@@ -44,10 +44,24 @@ const reducer: Reducer = (state, action) => {
   }
 };
 
+export type Forwards = {
+  __setTitle: (title?: string) => void;
+  __setDescription: (description: string) => void;
+};
+
 const App: VFC<AppProps<Forwards>> = ({ Component, pageProps }) => {
   const [state, dispatcher] = useReducer<Reducer>(reducer, {
     title: BASE_TITLE,
     description: "",
+  });
+
+  const forwards = useRef<Forwards>({
+    __setTitle: (title) => {
+      dispatcher({ type: "changeTitle", title });
+    },
+    __setDescription: (description) => {
+      dispatcher({ type: "changeDescription", description });
+    },
   });
 
   return (
@@ -57,6 +71,7 @@ const App: VFC<AppProps<Forwards>> = ({ Component, pageProps }) => {
         <title>{state.title}</title>
         <meta name={"description"} content={state.description} />
       </Head>
+      <Component {...pageProps} {...forwards.current} />
     </>
   );
 };
