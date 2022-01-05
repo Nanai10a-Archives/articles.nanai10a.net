@@ -1,20 +1,14 @@
 import type { NextPage } from "next";
-import Head from "next/head";
+import type { Forwards } from "./_app";
 
-const Page: NextPage = () => {
-  return (
-    <>
-      <Head>
-        <title>Title</title>
-        <meta name="description" content="description" />
-        <link rel="icon" href="/favicon.svg" />
-      </Head>
+import { useEffect } from "react";
 
-      <main />
+type Props = Forwards;
 
-      <footer />
-    </>
-  );
+const Page: NextPage<Props> = ({ __setTitle }) => {
+  useEffect(() => __setTitle(), [__setTitle]);
+
+  return <main></main>;
 };
 
 export default Page;
