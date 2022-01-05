@@ -49,6 +49,7 @@ export type Forwards = {
   __setDescription: (description: string) => void;
 };
 
+// Tips: declaration: `AppProps<Forwards>` is not working (for type-checking) because `pageProps` is `any`.
 const App: VFC<AppProps<Forwards>> = ({ Component, pageProps }) => {
   const [state, dispatcher] = useReducer<Reducer>(reducer, {
     title: BASE_TITLE,
