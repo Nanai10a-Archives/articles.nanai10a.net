@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-export type Props = Record<string, never>;
+type Props = Record<string, never>;
 
 const Footer: FC<Props> = () => {
   return <></>;
