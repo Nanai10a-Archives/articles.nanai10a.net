@@ -21,6 +21,7 @@ specifiers:
   react: 17.0.2
   react-dom: 17.0.2
   tailwindcss: ^3.0.9
+  tslib: ^2.3.1
   typescript: 4.5.4
 
 dependencies:
@@ -46,6 +47,7 @@ devDependencies:
   postcss: 8.4.5
   prettier: 2.5.1
   tailwindcss: 3.0.9_cefe482e8d38053bbf3d5815e0c551b3
+  tslib: 2.3.1
   typescript: 4.5.4
 
 packages:
@@ -3818,6 +3820,10 @@ packages:
 
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
+    dev: true
+
+  /tslib/2.3.1:
+    resolution: {integrity: sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==}
     dev: true
 
   /tsutils/3.21.0_typescript@4.5.4:
