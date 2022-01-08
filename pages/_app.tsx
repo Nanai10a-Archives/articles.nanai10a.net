@@ -3,6 +3,7 @@ import type { VFC } from "react";
 
 import { useRef, useReducer } from "react";
 import Head from "next/head";
+import Layout from "../components/layout";
 import "../styles/globals.css";
 
 const BASE_TITLE = "Nanai10a Articles";
@@ -72,7 +73,9 @@ const App: VFC<AppProps<Forwards>> = ({ Component, pageProps }) => {
         <title>{state.title}</title>
         <meta name={"description"} content={state.description} />
       </Head>
-      <Component {...pageProps} {...forwards.current} />
+      <Layout>
+        <Component {...pageProps} {...forwards.current} />
+      </Layout>
     </>
   );
 };
