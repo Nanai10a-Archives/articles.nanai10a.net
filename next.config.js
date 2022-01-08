@@ -3,6 +3,6 @@ module.exports = require("@next/mdx")({
   extension: /\.mdx?$/,
 })({
   reactStrictMode: true,
-  pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
+  pageExtensions: ["js", "jsx", "ts", "tsx"],
   swcMinify: true,
 });
