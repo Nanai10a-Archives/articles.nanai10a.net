@@ -73,7 +73,7 @@ packages:
       '@babel/parser': 7.16.7
       '@babel/template': 7.16.7
       '@babel/traverse': 7.16.7
-      '@babel/types': 7.15.0
+      '@babel/types': 7.16.7
       convert-source-map: 1.7.0
       debug: 4.3.3
       gensync: 1.0.0-beta.2
