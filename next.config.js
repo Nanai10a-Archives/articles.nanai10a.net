@@ -5,4 +5,4 @@ module.exports = require("@next/mdx")({
   reactStrictMode: true,
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   swcMinify: true,
-})
+});
