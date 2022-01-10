@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
-module.exports = require("@next/mdx")({
-  extension: /\.mdx?$/,
-})({
+module.exports = {
   reactStrictMode: true,
   pageExtensions: ["js", "jsx", "ts", "tsx"],
   swcMinify: true,
-});
+};
