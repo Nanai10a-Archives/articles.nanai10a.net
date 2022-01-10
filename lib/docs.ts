@@ -1,86 +1,85 @@
-import type { GrayMatterFile } from "gray-matter";
-import type { MDXRemoteSerializeResult } from "next-mdx-remote";
+import type { PromiseType } from "utility-types";
 
-import fs from "fs";
+import fsp from "fs/promises";
+import { constants as fsc } from "fs";
 import path from "path";
-import { serialize } from "next-mdx-remote/serialize";
 import matter from "gray-matter";
+import { compile } from "@mdx-js/mdx";
 
-const DOCS_DIR = path.join(__dirname, "../docs");
-const files = fs.existsSync(DOCS_DIR) ? fs.readdirSync(DOCS_DIR) : [];
+// Tips: this was executed from ".next/server/pages/a" ( === `__dirname`)
+const DOCS_DIR = path.join(__dirname, "../../../../docs");
 
-type Article = {
-  name: string;
-  matter: Matter;
-  src: MDXRemoteSerializeResult;
-  isMDX: boolean;
+const readDocsDir: () => Promise<Array<[string, string]>> = async () => {
+  let dirExists = false;
+  try {
+    await fsp.access(DOCS_DIR, fsc.R_OK);
+    dirExists = true;
+  } catch {
+    // eslint-disable-next-line no-empty
+  }
+
+  if (!dirExists) return [];
+
+  return (await fsp.readdir(DOCS_DIR)).map((f) => [f, path.join(DOCS_DIR, f)]);
 };
 
-type Matter = {
+const readFile = (path: string) => fsp.readFile(path);
+
+const compileMDX = async (src: Buffer) => {
+  const {
+    data: { title, description, tags, emoji },
+    content,
+  } = matter(src);
+
+  const assertFieldsType =
+    typeof title === "string" &&
+    typeof description === "string" &&
+    Array.isArray(tags) &&
+    tags.filter((t) => typeof t === "string").length === tags.length &&
+    typeof emoji === "string";
+
+  if (!assertFieldsType) return null;
+
+  const vfile = await compile(content, { outputFormat: "function-body" });
+  return {
+    showable: vfile.toString(),
+    matter: {
+      title,
+      description,
+      tags: tags as Array<string>,
+      emoji,
+    },
+  };
+};
+
+export type Article = {
+  name: string;
+  matter: Matter;
+  showable: string;
+};
+
+export type Matter = {
   title: string;
   description: string;
   tags: Array<string>;
   emoji: string;
 };
 
-const articlesPending = files
-  .map<[string, Array<string>]>((n) => [path.join(DOCS_DIR, n), n.split(".")])
-  .filter(([_p, ss]) => ss?.length === 2 && typeof ss[1] === "string" && /^mdx?$/.test(ss[1]))
-  .filter(
-    ([p, [name, extension]]) =>
-      typeof p === "string" && typeof name === "string" && typeof extension === "string",
-  )
-  .map<[string, string, string]>(([p, [name, extension]]) => [
-    p,
-    name as string,
-    extension as string,
-  ])
-  .map<[Pick<Article, "name" | "isMDX">, Buffer]>(([p, name, extension]) => [
-    { name, isMDX: extension === "mdx" },
-    fs.readFileSync(p),
-  ])
-  .map<[Pick<Article, "name" | "isMDX">, GrayMatterFile<Buffer>]>(([obj, buffer]) => [
-    obj,
-    matter(buffer),
-  ])
-  .filter(
-    ([_obj, fo]) =>
-      typeof fo.data["title"] === "string" &&
-      typeof fo.data["description"] === "string" &&
-      Array.isArray(fo.data["tags"]) &&
-      typeof fo.data["emoji"] === "string",
-  )
-  .filter(
-    ([_obj, fo]) =>
-      fo.data["tags"].filter((v: unknown) => typeof v === "string").length ===
-      fo.data["tags"].length,
-  )
-  .map<Promise<Article>>(
-    async ([
-      { name, isMDX },
-      {
-        data: { title, description, tags, emoji },
-        content,
-      },
-    ]) => {
-      return {
-        name,
-        matter: {
-          title,
-          description,
-          tags,
-          emoji,
-        },
-        src: await serialize(content),
-        isMDX,
-      };
-    },
+export const getArticles = async () => {
+  const readPendings = (await readDocsDir()).map<Promise<[string, Buffer]>>(
+    async ([name, path]) => [name, await readFile(path)],
   );
 
-let articles: Record<string, Article | undefined> | null = null;
-export const getArticles = async () => {
-  if (articles === null)
-    articles = Object.fromEntries((await Promise.all(articlesPending)).map((a) => [a.name, a]));
+  type cMDXReturn = PromiseType<ReturnType<typeof compileMDX>>;
 
-  return articles;
+  const compilePendings = (await Promise.all(readPendings)).map<Promise<[string, cMDXReturn]>>(
+    async ([name, buffer]) => [name, await compileMDX(buffer)],
+  );
+
+  const newArticles = (await Promise.all(compilePendings))
+    .filter(([_name, compiled]) => compiled !== null)
+    .map<Article>(([name, compiled]) => ({ name, ...(compiled as NonNullable<cMDXReturn>) }))
+    .map<[string, Article]>((a) => [a.name, a]);
+
+  return Object.fromEntries(newArticles);
 };
