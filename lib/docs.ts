@@ -5,13 +5,34 @@ import path from "path";
 import matter from "gray-matter";
 import { compile } from "@mdx-js/mdx";
 
-// Tips: this was executed from ".next/server/pages/a" ( === `__dirname`)
-const DOCS_DIR = path.join(__dirname, "../../../../docs");
+// Tips: this was executed from ".next/server/pages${path}", so `__dirname` isn't decisive
+const getRootDir = () => {
+  const split_dirname = __dirname.split(path.sep);
+  if (typeof split_dirname[0] !== "string" || split_dirname[0].length !== 0)
+    throw new Error("`__dirname` is not absolute path");
+
+  let rootIndex;
+  for (
+    rootIndex = split_dirname.length - 4;
+    !(
+      split_dirname[rootIndex + 1] === ".next" &&
+      split_dirname[rootIndex + 2] === "server" &&
+      split_dirname[rootIndex + 3] === "pages"
+    );
+    rootIndex--
+  )
+    if (rootIndex < 0)
+      throw new Error('couldn\'t find path of ".next/server/pages" in `__dirname`');
+  split_dirname.length = rootIndex;
+  return path.join("/", ...split_dirname);
+};
 
 const readDocsDir: () => Promise<Array<[string, string]>> = async () => {
+  const docs_dir = path.join(getRootDir(), "docs");
+
   let dirExists = false;
   try {
-    await fsp.access(DOCS_DIR, fsc.R_OK);
+    await fsp.access(docs_dir, fsc.R_OK);
     dirExists = true;
   } catch {
     // eslint-disable-next-line no-empty
@@ -19,7 +40,7 @@ const readDocsDir: () => Promise<Array<[string, string]>> = async () => {
 
   if (!dirExists) return [];
 
-  return (await fsp.readdir(DOCS_DIR)).map((f) => [f, path.join(DOCS_DIR, f)]);
+  return (await fsp.readdir(docs_dir)).map((f) => [f, path.join(docs_dir, f)]);
 };
 
 const readFile = (path: string) => fsp.readFile(path);
