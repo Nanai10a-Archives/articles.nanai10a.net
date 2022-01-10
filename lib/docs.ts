@@ -1,7 +1,6 @@
 import type { PromiseType } from "utility-types";
 
-import fsp from "fs/promises";
-import { constants as fsc } from "fs";
+import { constants as fsc, promises as fsp } from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { compile } from "@mdx-js/mdx";
