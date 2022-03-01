@@ -15,9 +15,9 @@ const getRootDir = () => {
   for (
     rootIndex = split_dirname.length - 4;
     !(
-      split_dirname[rootIndex + 1] === ".next" &&
-      split_dirname[rootIndex + 2] === "server" &&
-      split_dirname[rootIndex + 3] === "pages"
+      split_dirname[rootIndex + 0] === ".next" &&
+      split_dirname[rootIndex + 1] === "server" &&
+      split_dirname[rootIndex + 2] === "pages"
     );
     rootIndex--
   )
