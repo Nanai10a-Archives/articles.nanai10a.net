@@ -27,8 +27,8 @@ const getRootDir = () => {
   return path.join("/", ...split_dirname);
 };
 
-const readDocsDir: () => Promise<Array<[string, string]>> = async () => {
-  const docs_dir = path.join(getRootDir(), "docs");
+const readDocsDir: (kind: string) => Promise<Array<[string, string]>> = async (kind) => {
+  const docs_dir = path.join(getRootDir(), "docs", kind);
 
   let dirExists = false;
   try {
@@ -72,7 +72,7 @@ const compileMDX = async (src: Buffer) => {
   };
 };
 
-export type Article = {
+export type Content = {
   name: string;
   matter: Matter;
   showable: string;
@@ -85,21 +85,25 @@ export type Matter = {
   emoji: string;
 };
 
-export const getArticles = async () => {
-  const readPendings = (await readDocsDir()).map<Promise<[string, Buffer]>>(
-    async ([name, path]) => [name, await readFile(path)],
-  );
+export const getContents = async (): Promise<Record<string, Record<string, Content>>> => {
+  const contentPendings = ["articles"].map(async (kind) => {
+    const readPendings = (await readDocsDir(kind)).map<Promise<[string, Buffer]>>(
+      async ([name, path]) => [name, await readFile(path)],
+    );
 
-  type cMDXReturn = PromiseType<ReturnType<typeof compileMDX>>;
+    type cMDXReturn = PromiseType<ReturnType<typeof compileMDX>>;
 
-  const compilePendings = (await Promise.all(readPendings)).map<Promise<[string, cMDXReturn]>>(
-    async ([name, buffer]) => [name, await compileMDX(buffer)],
-  );
+    const compilePendings = (await Promise.all(readPendings)).map<Promise<[string, cMDXReturn]>>(
+      async ([name, buffer]) => [name, await compileMDX(buffer)],
+    );
 
-  const newArticles = (await Promise.all(compilePendings))
-    .filter(([_name, compiled]) => compiled !== null)
-    .map<Article>(([name, compiled]) => ({ name, ...(compiled as NonNullable<cMDXReturn>) }))
-    .map<[string, Article]>((a) => [a.name, a]);
+    const newContents = (await Promise.all(compilePendings))
+      .filter(([_name, compiled]) => compiled !== null)
+      .map<Content>(([name, compiled]) => ({ name, ...(compiled as NonNullable<cMDXReturn>) }))
+      .map<[string, Content]>((a) => [a.name, a]);
 
-  return Object.fromEntries(newArticles);
+    return [kind, Object.fromEntries(newContents)];
+  });
+
+  return Object.fromEntries(await Promise.all(contentPendings));
 };
