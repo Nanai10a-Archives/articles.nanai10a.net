@@ -20,6 +20,9 @@ module.exports = {
         warning: "#cc8c2e",
         danger: "#f44336",
       },
+      screens: {
+        dark: { raw: "(prefers-color-scheme: dark)" },
+      },
     },
   },
   plugins: [],
