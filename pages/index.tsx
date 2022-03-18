@@ -5,8 +5,8 @@ import { useEffect } from "react";
 
 type Props = Forwards;
 
-const Page: NextPage<Props> = ({ __setTitle }) => {
-  useEffect(() => __setTitle(), [__setTitle]);
+const Page: NextPage<Props> = ({ __setTitle: setTitle }) => {
+  useEffect(() => setTitle(), [setTitle]);
 
   return <main></main>;
 };

@@ -10,8 +10,8 @@ import { getContents } from "../../lib/docs";
 
 type Props = Forwards & Content;
 
-const Page: NextPage<Props> = ({ __setTitle, matter, source }) => {
-  useEffect(() => __setTitle(matter.title), [__setTitle, matter.title]);
+const Page: NextPage<Props> = ({ __setTitle: setTitle, matter, source }) => {
+  useEffect(() => setTitle(matter.title), [setTitle, matter.title]);
   const Content = runSync(source, runtime).default;
 
   return (
