@@ -20,6 +20,7 @@ module.exports = {
         warning: "#cc8c2e",
         danger: "#f44336",
       },
+      fontFamily: { zen: ["'Zen Kaku Gothic New'", "sans-serif"] },
       screens: {
         dark: { raw: "(prefers-color-scheme: dark)" },
       },
