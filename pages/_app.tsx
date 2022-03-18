@@ -62,7 +62,7 @@ const App: VFC<AppProps<Forwards>> = ({ Component, pageProps }) => {
       dispatcher({ type: "changeTitle", title });
     },
     __setDescription: (description) => {
-      dispatcher({ type: "changeDescription", description });
+      dispatch({ type: "changeDescription", description });
     },
   });
 
@@ -72,16 +72,6 @@ const App: VFC<AppProps<Forwards>> = ({ Component, pageProps }) => {
         <link rel="icon" href="/favicon.svg" />
         <title>{state.title}</title>
         <meta name={"description"} content={state.description} />
-
-        {/* Preconnecting to Google API */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-
-        {/* Import: Zen Kaku Gothic New */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New&display=swap"
-          rel="stylesheet"
-        />
       </Head>
       <Layout>
         <Component {...pageProps} {...forwards.current} />
