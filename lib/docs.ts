@@ -62,7 +62,7 @@ const compileMDX = async (src: Buffer) => {
 
   const vfile = await compile(content, { outputFormat: "function-body" });
   return {
-    showable: vfile.toString(),
+    source: vfile.toString(),
     matter: {
       title,
       description,
@@ -75,7 +75,7 @@ const compileMDX = async (src: Buffer) => {
 export type Content = {
   name: string;
   matter: Matter;
-  showable: string;
+  source: string;
 };
 
 export type Matter = {
