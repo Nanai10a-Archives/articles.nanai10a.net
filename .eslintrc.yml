@@ -3,6 +3,7 @@ plugins:
   - "@typescript-eslint"
   - "react"
   - "react-hooks"
+  - "jest"
 
 extends:
   - "eslint:recommended"
@@ -11,6 +12,8 @@ extends:
   - "plugin:@typescript-eslint/recommended"
   - "plugin:prettier/recommended"
   - "next/core-web-vitals"
+  - "plugin:jest/recommended"
+  - "plugin:jest/style"
 
 rules:
   "@typescript-eslint/no-unused-vars":
