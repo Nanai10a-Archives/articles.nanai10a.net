@@ -1,25 +1,25 @@
 plugins:
-  - 'prettier'
-  - '@typescript-eslint'
-  - 'react'
-  - 'react-hooks'
+  - "prettier"
+  - "@typescript-eslint"
+  - "react"
+  - "react-hooks"
 
 extends:
-  - 'eslint:recommended'
-  - 'plugin:react/recommended'
-  - 'plugin:react-hooks/recommended'
-  - 'plugin:@typescript-eslint/recommended'
-  - 'plugin:prettier/recommended'
-  - 'next/core-web-vitals'
+  - "eslint:recommended"
+  - "plugin:react/recommended"
+  - "plugin:react-hooks/recommended"
+  - "plugin:@typescript-eslint/recommended"
+  - "plugin:prettier/recommended"
+  - "next/core-web-vitals"
 
 rules:
-  '@typescript-eslint/no-unused-vars':
+  "@typescript-eslint/no-unused-vars":
     - "warn"
-    - varsIgnorePattern: '^_'
-      argsIgnorePattern: '^_'
+    - varsIgnorePattern: "^_"
+      argsIgnorePattern: "^_"
 
-parser: '@typescript-eslint/parser'
+parser: "@typescript-eslint/parser"
 parserOptions:
-  sourceType: 'module'
+  sourceType: "module"
   ecmaFeatures:
     jsx: true
