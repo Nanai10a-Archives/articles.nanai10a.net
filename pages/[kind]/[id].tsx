@@ -6,7 +6,8 @@ import type { Content } from "../../lib/docs";
 import { useEffect } from "react";
 import * as runtime from "react/jsx-runtime";
 import { runSync } from "@mdx-js/mdx";
-import { getContents } from "../../lib/docs";
+
+import { getContents } from "lib/docs";
 
 type Props = Forwards & Content;
 

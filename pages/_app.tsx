@@ -3,8 +3,10 @@ import type { VFC } from "react";
 
 import { useRef, useReducer } from "react";
 import Head from "next/head";
-import Layout from "../components/layout";
-import "../styles/globals.css";
+
+import Layout from "components/layout";
+
+import "styles/globals.css";
 
 const BASE_TITLE = "Nanai10a Articles";
 

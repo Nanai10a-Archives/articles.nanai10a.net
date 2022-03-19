@@ -30,7 +30,8 @@
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "baseUrl": "."
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
