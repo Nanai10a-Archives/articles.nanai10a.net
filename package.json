@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.16.7",
+    "@material-icons/svg": "^1.0.26",
     "@mdx-js/mdx": "^2.0.0-rc.2",
     "@types/jest": "^27.4.1",
     "@types/node": "17.0.7",
