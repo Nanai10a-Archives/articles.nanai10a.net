@@ -5,30 +5,8 @@ import path from "path";
 import matter from "gray-matter";
 import { compile } from "@mdx-js/mdx";
 
-// Tips: this was executed from ".next/server/pages${path}", so `__dirname` isn't decisive
-const getRootDir = () => {
-  const split_dirname = __dirname.split(path.sep);
-  if (typeof split_dirname[0] !== "string" || split_dirname[0].length !== 0)
-    throw new Error("`__dirname` is not absolute path");
-
-  let rootIndex;
-  for (
-    rootIndex = split_dirname.length - 4;
-    !(
-      split_dirname[rootIndex + 0] === ".next" &&
-      split_dirname[rootIndex + 1] === "server" &&
-      split_dirname[rootIndex + 2] === "pages"
-    );
-    rootIndex--
-  )
-    if (rootIndex < 0)
-      throw new Error('couldn\'t find path of ".next/server/pages" in `__dirname`');
-  split_dirname.length = rootIndex;
-  return path.join("/", ...split_dirname);
-};
-
 const readDocsDir: (kind: string) => Promise<Array<[string, string]>> = async (kind) => {
-  const docs_dir = path.join(getRootDir(), "docs", kind);
+  const docs_dir = path.join(process.cwd(), "docs", kind);
 
   let dirExists = false;
   try {
