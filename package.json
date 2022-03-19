@@ -9,7 +9,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@icons-pack/react-simple-icons": "^4.6.1",
     "gray-matter": "^4.0.3",
     "next": "12.1.0",
     "react": "17.0.2",
