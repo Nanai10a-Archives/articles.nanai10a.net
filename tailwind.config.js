@@ -21,9 +21,6 @@ module.exports = {
         danger: "#f44336",
       },
       fontFamily: { zen: ["'Zen Kaku Gothic New'", "sans-serif"] },
-      screens: {
-        dark: { raw: "(prefers-color-scheme: dark)" },
-      },
     },
   },
   plugins: [],
