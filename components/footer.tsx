@@ -1,9 +1,7 @@
-import type { FC } from "react";
+import type { VFC } from "react";
 
 type Props = Record<string, never>;
 
-const Footer: FC<Props> = () => {
-  return <></>;
-};
+const Footer: VFC<Props> = () => <footer className="w-screen"></footer>;
 
 export default Footer;

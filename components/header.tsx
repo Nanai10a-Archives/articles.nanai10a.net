@@ -1,9 +1,7 @@
-import type { FC } from "react";
+import type { VFC } from "react";
 
 type Props = Record<string, never>;
 
-const Header: FC<Props> = () => {
-  return <></>;
-};
+const Header: VFC<Props> = () => <header className="w-screen"></header>;
 
 export default Header;
