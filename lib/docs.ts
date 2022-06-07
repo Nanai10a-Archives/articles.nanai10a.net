@@ -1,6 +1,8 @@
 import type { PromiseType } from "utility-types";
 
-import { constants as fsc, promises as fsp } from "fs";
+import * as fpe from "fp-ts/Either";
+import * as io from "io-ts";
+import { constants as fsc, promises as fs } from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { compile } from "@mdx-js/mdx";
@@ -8,44 +10,37 @@ import { compile } from "@mdx-js/mdx";
 const readDocsDir: (kind: string) => Promise<Array<[string, string]>> = async (kind) => {
   const docs_dir = path.join(process.cwd(), "docs", kind);
 
-  let dirExists = false;
+  let dirExists: boolean;
   try {
-    await fsp.access(docs_dir, fsc.R_OK);
+    await fs.access(docs_dir, fsc.R_OK);
     dirExists = true;
-  } catch {
-    // eslint-disable-next-line no-empty
+  } catch (e) {
+    const decoded = io.type({ code: io.string }).decode(e);
+    if (fpe.isRight(decoded) && decoded.right.code.toLowerCase() === "eacces") {
+      dirExists = false;
+    } else {
+      throw e;
+    }
   }
 
   if (!dirExists) return [];
 
-  return (await fsp.readdir(docs_dir)).map((f) => [f, path.join(docs_dir, f)]);
+  return (await fs.readdir(docs_dir)).map((f) => [f, path.join(docs_dir, f)]);
 };
 
-const readFile = (path: string) => fsp.readFile(path);
+const readFile = (path: string) => fs.readFile(path);
 
 const compileMDX = async (src: Buffer) => {
-  const {
-    data: { title, description, tags, emoji },
-    content,
-  } = matter(src);
+  const { data, content } = matter(src);
 
-  const assertFieldsType =
-    typeof title === "string" &&
-    typeof description === "string" &&
-    Array.isArray(tags) &&
-    tags.filter((t) => typeof t === "string").length === tags.length &&
-    typeof emoji === "string";
-
-  if (!assertFieldsType) return null;
+  const decoded = Matter.decode(data);
+  if (fpe.isLeft(decoded)) return null;
 
   const vfile = await compile(content, { outputFormat: "function-body" });
   return {
     source: vfile.toString(),
     matter: {
-      title,
-      description,
-      tags: tags as Array<string>,
-      emoji,
+      ...decoded.right,
     },
   };
 };
@@ -56,14 +51,21 @@ export type Content = {
   source: string;
 };
 
-export type Matter = {
-  title: string;
-  description: string;
-  tags: Array<string>;
-  emoji: string;
-};
+const Matter = io.type({
+  title: io.string,
+  description: io.string,
+  tags: io.array(io.string),
+  emoji: io.string,
+});
 
-export const getContents = async (): Promise<Record<string, Record<string, Content>>> => {
+export type Matter = io.TypeOf<typeof Matter>;
+
+let contentsCache: PromiseType<ReturnType<typeof getContents>> | undefined = undefined;
+export const getContents = async (
+  revalidate?: boolean,
+): Promise<Record<string, Record<string, Content>>> => {
+  if (!revalidate && contentsCache !== undefined) return contentsCache;
+
   const contentPendings = ["articles"].map(async (kind) => {
     const readPendings = (await readDocsDir(kind)).map<Promise<[string, Buffer]>>(
       async ([name, path]) => [name, await readFile(path)],
@@ -83,5 +85,8 @@ export const getContents = async (): Promise<Record<string, Record<string, Conte
     return [kind, Object.fromEntries(newContents)];
   });
 
-  return Object.fromEntries(await Promise.all(contentPendings));
+  const contents = Object.fromEntries(await Promise.all(contentPendings));
+
+  contentsCache = contents;
+  return contents;
 };

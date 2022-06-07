@@ -10,6 +10,8 @@ import { runSync } from "@mdx-js/mdx";
 
 import { getContents } from "lib/docs";
 
+// const styles = {};
+
 type Props = Forwards & Content;
 
 const Page: NextPage<Props> = ({ __setTitle: setTitle, matter, source }) => {
