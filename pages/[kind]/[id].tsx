@@ -1,7 +1,8 @@
 import type { Diff } from "utility-types";
 import type { NextPage, GetStaticPaths, GetStaticProps } from "next";
-import type { Forwards } from "../_app";
-import type { Content } from "../../lib/docs";
+
+import type { Forwards } from "pages/_app";
+import type { Content } from "lib/docs";
 
 import { useEffect } from "react";
 import * as runtime from "react/jsx-runtime";
